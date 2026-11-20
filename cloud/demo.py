@@ -1,7 +1,7 @@
 from odoo import Command
 
 params = env["ir.config_parameter"].sudo()
-if params.get_param("tarea4.demo.initialized") != "1":
+if params.get_str("tarea4.demo.initialized") != "1":
     company = env.company.sudo()
     currency = env.ref("base.HNL").sudo()
     currency.write({"active": True})
