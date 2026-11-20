@@ -71,4 +71,20 @@ if not initialized:
     subprocess.run(command[:2] + ["shell"] + command[2:] + ["--no-http"],
                    input=bootstrap, text=True, check=True)
 
+
+with psycopg2.connect(**db) as conn:
+    with conn.cursor() as cr:
+        cr.execute("SELECT value FROM ir_config_parameter WHERE key = %s",
+                   ("tarea4.demo.initialized",))
+        demo_ready = cr.fetchone() == ("1",)
+
+if not demo_ready:
+    print("Preparing sample product and quotation for Tarea 4.", flush=True)
+    demo = Path(__file__).with_name("demo.py").read_text(encoding="utf-8")
+    try:
+        subprocess.run(command[:2] + ["shell"] + command[2:] + ["--no-http"],
+                       input=demo, text=True, check=True)
+    except subprocess.CalledProcessError:
+        print("Sample-data preparation failed; Odoo will start normally.", flush=True)
+
 os.execv(command[0], command)
